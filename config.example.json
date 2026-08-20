@@ -1,0 +1,7 @@
+{
+  "enabled_platforms": [],
+  "watchlist_keywords": [],
+  "min_reward_usd": 0,
+  "poll_interval_minutes": 60,
+  "data_dir": "data"
+}
