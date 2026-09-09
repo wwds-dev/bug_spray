@@ -10,7 +10,7 @@ Status: `IDEA` · `CONSIDERING` · `PLANNED` · `DONE` · `REJECTED`
 |---|---|---|---|---|
 | 1 | HackerOne public program directory adapter (JSON:API, no auth needed for public programs) | feature | M | PLANNED |
 | 2 | Bugcrowd, Intigriti, YesWeHack, Immunefi adapters behind the same `fetch_programs()` interface | feature | L | IDEA |
-| 3 | Snapshot diffing: flag scope additions, reward changes, and newly-launched programs since last run | feature | M | PLANNED |
+| 3 | Snapshot diffing: flag scope additions, reward changes, and newly-launched programs since last run | feature | M | PARTIAL — scope added/removed diffing shipped in `store.diff_scope`; reward-change and new-program detection still open |
 | 4 | Watchlist filters (tech stack keywords, minimum reward, program tags) so the feed isn't 500 programs wide | feature | S | IDEA |
 | 5 | Digest notification (desktop notification or a `lab_hub` badge) when a watched program changes | feature | S | IDEA |
 

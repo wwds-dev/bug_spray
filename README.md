@@ -60,8 +60,9 @@ Planned sources, in rough order of how open their data is:
 
 Same rule as [`unblock_tracker`](../unblock_tracker/README.md): no hardcoded identifiers,
 no secrets in git. Any platform API token lives in the macOS Keychain via `keyring`, loaded
-by `bug_spray/config.py`. Non-secret settings (which platforms to poll, poll interval,
-watchlist filters) live in a git-ignored `config.json` next to `main.py`.
+by `bug_spray/secrets.py`. Non-secret settings (which platforms to poll, poll interval,
+watchlist filters) live in a git-ignored `config.json` next to `main.py`, loaded by
+`bug_spray/config.py`.
 
 ## Project layout
 
@@ -69,7 +70,8 @@ watchlist filters) live in a git-ignored `config.json` next to `main.py`.
 bug_spray/
   bug_spray/
     __init__.py
-    config.py       # keyring-backed secrets + config.json loader
+    config.py       # config.json loader — non-secret settings only
+    secrets.py       # macOS Keychain-backed API token storage
     models.py        # Program / Scope / RewardTier dataclasses
     store.py          # SQLite snapshot cache + diffing
     sources/            # one module per platform, each exposing fetch_programs()
@@ -83,9 +85,13 @@ bug_spray/
 
 ## Status
 
-Scaffold only — no source adapter is implemented yet (see [TODO.md](TODO.md)). Nothing in
-this project makes network calls, touches a real bug bounty program, or handles a real
-credential until that changes.
+The framework is built: config loading, the SQLite snapshot store with diffing, the CLI
+(`--selftest` and `scan`), and the `Program`/`Scope`/`RewardTier` models are all in place
+and covered by tests (`tests/test_selftest.py`). No platform adapter is implemented yet —
+`bug_spray/sources/hackerone.py` is registered but its `fetch_programs()` raises
+`NotImplementedError` until the real HackerOne fetch is written (see [TODO.md](TODO.md),
+v1). Nothing in this project makes network calls, touches a real bug bounty program, or
+handles a real credential until that changes.
 
 ## Environment
 
