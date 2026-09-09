@@ -11,17 +11,17 @@
 - [x] `P1` `infra` `@ai` Project skeleton: `pyproject.toml`, `.gitignore`, `bug_spray/` package, `main.py` CLI stub, `tests/`
 - [x] `P1` `docs` `@ai` README with the honest-boundary section (what's automatable vs. stays human-in-the-loop)
 - [x] `P1` `docs` `@ai` This file + SUGGESTIONS.md
-- [ ] `P1` `infra` `@me` `git init` this as its own repo and give it the standard pseudonymous identity, or say the word and I'll do it
+- [x] `P1` `infra` `@me` `git init` this as its own repo and give it the standard pseudonymous identity, or say the word and I'll do it
 - [ ] `P2` `infra` `@me` Rebuild the venv via `_Admin/rebuild_envs.sh` once dependencies are non-empty
 
 ## v1 — real discovery, no auth needed
 
 - [ ] `P0` `feature` `@ai` HackerOne public program directory adapter — this is the highest-value single source and needs no API key
-- [ ] `P1` `feature` `@ai` `models.py`: `Program`, `Scope`, `RewardTier` dataclasses shared by every adapter
-- [ ] `P1` `feature` `@ai` `store.py`: SQLite snapshot cache + diff-since-last-run
-- [ ] `P1` `feature` `@ai` CLI `scan` command: fetch, store, print what changed
+- [x] `P1` `feature` `@ai` `models.py`: `Program`, `Scope`, `RewardTier` dataclasses shared by every adapter
+- [x] `P1` `feature` `@ai` `store.py`: SQLite snapshot cache + diff-since-last-run
+- [x] `P1` `feature` `@ai` CLI `scan` command: fetch, store, print what changed
 - [ ] `P2` `feature` `@ai` Watchlist filters in `config.json` (keywords, min reward, tags)
-- [ ] `P2` `testing` `@ai` `main.py --selftest` per the lab convention — checks config loads, DB opens, adapters import cleanly, no network call required
+- [x] `P2` `testing` `@ai` `main.py --selftest` per the lab convention — checks config loads, DB opens, adapters import cleanly, no network call required
 - [ ] `P3` `feature` `@ai` Bugcrowd, Intigriti, YesWeHack, Immunefi adapters, same interface as HackerOne's
 
 ## v2 — triage workflow
