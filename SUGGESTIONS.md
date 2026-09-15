@@ -38,6 +38,12 @@ Status: `IDEA` · `CONSIDERING` · `PLANNED` · `DONE` · `REJECTED`
 | 13 | `lab_hub` launch card once the CLI workflow is proven useful | feature | M | IDEA |
 | 14 | PySide6 GUI (dashboard of watched programs, diff feed, triage board) mirroring `sonar`'s card layout | feature | XL | IDEA |
 
+## Done
+
+| Suggestion | When |
+|---|---|
+| `sentinel_chat_agent.py` (`BugBountyAgent`) shipped as Sentinel's in-app Bug Spray chat agent, and documented in README | 2026-09-15 |
+
 ## Rejected
 
 | Suggestion | Why |

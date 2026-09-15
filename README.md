@@ -56,6 +56,24 @@ Planned sources, in rough order of how open their data is:
 | YesWeHack | Public program listing | |
 | Immunefi | Public program listing + reward table | Crypto/web3 only |
 
+## In-app integration (Sentinel)
+
+`sentinel_chat_agent.py` at the repo root is separate from the `bug_spray/` package
+above: it is what Sentinel imports as its built-in **Bug Spray** (`bug_bounty`) chat
+agent, not part of the discovery/monitoring CLI. It is a single LLM-only class,
+`BugBountyAgent`, with no source adapters, no store, and no network calls of its own.
+
+`build_messages(target, program, scope_type, findings, nmap_output)` assembles a
+system prompt instructing the model to analyse recon data the *operator* supplies
+(HTTP responses, Burp output, nmap results, source snippets) for a target the operator
+has stated is in an authorized, in-scope bug bounty program, and to produce two
+sections: a structured **vulnerability report** (CWE, severity/CVSS, PoC, impact,
+remediation, references) and a ready-to-paste **submission draft** for HackerOne or
+Bugcrowd. It never generates exploits for out-of-scope targets and never claims
+authorization on the operator's behalf — scope and authorization are asserted by
+whoever is chatting with it, the same human-in-the-loop boundary as the rest of this
+project (see "The honest boundary" above).
+
 ## Secrets and config
 
 Same rule as [`unblock_tracker`](../unblock_tracker/README.md): no hardcoded identifiers,
@@ -67,6 +85,8 @@ watchlist filters) live in a git-ignored `config.json` next to `main.py`, loaded
 ## Project layout
 
 ```
+sentinel_chat_agent.py  Sentinel's in-app Bug Spray (bug_bounty) chat agent —
+                        BugBountyAgent, LLM-only, no source adapters
 bug_spray/
   bug_spray/
     __init__.py

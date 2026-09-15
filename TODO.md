@@ -20,6 +20,7 @@
 - [x] `P1` `feature` `@ai` `models.py`: `Program`, `Scope`, `RewardTier` dataclasses shared by every adapter
 - [x] `P1` `feature` `@ai` `store.py`: SQLite snapshot cache + diff-since-last-run
 - [x] `P1` `feature` `@ai` CLI `scan` command: fetch, store, print what changed
+- [x] `P1` `feature` `docs` `@ai` `sentinel_chat_agent.py`: `BugBountyAgent`, the LLM-only Sentinel in-app Bug Spray (`bug_bounty`) chat agent that turns operator-supplied recon/PoC data into a vulnerability report and a submission draft — now documented in README.
 - [ ] `P2` `feature` `@ai` Watchlist filters in `config.json` (keywords, min reward, tags)
 - [x] `P2` `testing` `@ai` `main.py --selftest` per the lab convention — checks config loads, DB opens, adapters import cleanly, no network call required
 - [ ] `P3` `feature` `@ai` Bugcrowd, Intigriti, YesWeHack, Immunefi adapters, same interface as HackerOne's
