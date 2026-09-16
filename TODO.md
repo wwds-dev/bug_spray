@@ -8,6 +8,7 @@
 
 ## v0 — scaffold (this session)
 
+- [ ] `P2` `feature` `security` `@ai` Authorised assessment path, staged. Split out of the parent list's four-agent "staged specialist integrations" item. Authorisation is the gate, not an afterthought; excludes denial of service, credential theft, stealth/persistence and uncontrolled exploitation. *(split out of sentinel_fork/TODO.md)*
 - [x] `P1` `infra` `@ai` Project skeleton: `pyproject.toml`, `.gitignore`, `bug_spray/` package, `main.py` CLI stub, `tests/`
 - [x] `P1` `docs` `@ai` README with the honest-boundary section (what's automatable vs. stays human-in-the-loop)
 - [x] `P1` `docs` `@ai` This file + SUGGESTIONS.md
