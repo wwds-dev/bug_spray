@@ -1,0 +1,59 @@
+[
+ {
+  "programId": "dd9dba85-e047-42f3-b59e-9328c7d49672",
+  "status": 3,
+  "confidentialityLevel": 4,
+  "companyHandle": "digitalocean",
+  "companyName": "DigitalOcean",
+  "handle": "digitalocean",
+  "name": "DigitalOcean",
+  "industry": "software",
+  "minBounty": {
+   "value": 50.0,
+   "currency": "USD"
+  },
+  "maxBounty": {
+   "value": 10000.0,
+   "currency": "USD"
+  },
+  "lastUpdatedAt": 1790276715
+ },
+ {
+  "programId": "628aafa9-b3ef-4967-a783-2fe4803be088",
+  "status": 3,
+  "confidentialityLevel": 2,
+  "companyHandle": "leapsome",
+  "companyName": "Leapsome",
+  "handle": "leapsome",
+  "name": "Leapsome",
+  "industry": "software",
+  "minBounty": {
+   "value": 60.0,
+   "currency": "EUR"
+  },
+  "maxBounty": {
+   "value": 3000.0,
+   "currency": "EUR"
+  },
+  "lastUpdatedAt": 1789640948
+ },
+ {
+  "programId": "69a64cbf-305d-4f48-90e5-0b7377c67bac",
+  "status": 3,
+  "confidentialityLevel": 4,
+  "companyHandle": "grafanalabs",
+  "companyName": "Grafana",
+  "handle": "grafanalabsvdp",
+  "name": "Grafana Labs - Vulnerability Disclosure Program (VDP)",
+  "industry": "software",
+  "minBounty": {
+   "value": 0.0,
+   "currency": "USD"
+  },
+  "maxBounty": {
+   "value": 0.0,
+   "currency": "USD"
+  },
+  "lastUpdatedAt": 1783098149
+ }
+]

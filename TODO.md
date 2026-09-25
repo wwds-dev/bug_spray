@@ -6,25 +6,28 @@
 
 ---
 
-## v0 — scaffold (this session)
+## v1 — complete (2026-09-25): real discovery, no auth needed
 
-- [ ] `P2` `feature` `security` `@ai` Authorised assessment path, staged. Split out of the parent list's four-agent "staged specialist integrations" item. Authorisation is the gate, not an afterthought; excludes denial of service, credential theft, stealth/persistence and uncontrolled exploitation. *(split out of sentinel_fork/TODO.md)*
-- [x] `P1` `infra` `@ai` Project skeleton: `pyproject.toml`, `.gitignore`, `bug_spray/` package, `main.py` CLI stub, `tests/`
-- [x] `P1` `docs` `@ai` README with the honest-boundary section (what's automatable vs. stays human-in-the-loop)
-- [x] `P1` `docs` `@ai` This file + SUGGESTIONS.md
-- [x] `P1` `infra` `@me` `git init` this as its own repo and give it the standard pseudonymous identity, or say the word and I'll do it
-- [ ] `P2` `infra` `@me` Rebuild the venv via `_Admin/rebuild_envs.sh` once dependencies are non-empty
-
-## v1 — real discovery, no auth needed
-
-- [ ] `P0` `feature` `@ai` HackerOne public program directory adapter — this is the highest-value single source and needs no API key
+- [x] `P0` `feature` `@ai` HackerOne public program directory adapter — this is the highest-value single source and needs no API key. *Reads the site's anonymous GraphQL directory; the documented Hacker API turned out to need a token even for public programs.*
 - [x] `P1` `feature` `@ai` `models.py`: `Program`, `Scope`, `RewardTier` dataclasses shared by every adapter
 - [x] `P1` `feature` `@ai` `store.py`: SQLite snapshot cache + diff-since-last-run
 - [x] `P1` `feature` `@ai` CLI `scan` command: fetch, store, print what changed
 - [x] `P1` `feature` `docs` `@ai` `sentinel_chat_agent.py`: `BugBountyAgent`, the LLM-only Sentinel in-app Bug Spray (`bug_bounty`) chat agent that turns operator-supplied recon/PoC data into a vulnerability report and a submission draft — now documented in README.
-- [ ] `P2` `feature` `@ai` Watchlist filters in `config.json` (keywords, min reward, tags)
+- [x] `P2` `feature` `@ai` Watchlist filters in `config.json` (keywords, min reward, tags) — `watchlist.py`; filters what is reported, never what is stored
 - [x] `P2` `testing` `@ai` `main.py --selftest` per the lab convention — checks config loads, DB opens, adapters import cleanly, no network call required
-- [ ] `P3` `feature` `@ai` Bugcrowd, Intigriti, YesWeHack, Immunefi adapters, same interface as HackerOne's
+- [x] `P3` `feature` `@ai` Bugcrowd, Intigriti, YesWeHack, Immunefi adapters, same interface as HackerOne's — all anonymous; login-walled Intigriti programs (registered-only / terms / 2FA) are stored from the listing only
+- [x] `P2` `infra` `@ai` Rebuild the venv on the Mac (2026-09-25; the old one was a Linux venv from a bridge session, `python` a dangling symlink). `_Admin/rebuild_envs.sh` only walks the top level of `active/` and never reached this nested repo, so it was rebuilt directly with `uv` — command in README → Environment.
+- [x] `P1` `feature` `@ai` Full change detection: new programs, reward changes per severity, paused/resumed, and gone/back (dropped out of / returned to the public listing) on top of scope diffing — `changes.py`
+- [x] `P1` `performance` `@ai` Store a snapshot only when a program changed; skip detail requests when the platform's update marker is unchanged (`scan --full` overrides)
+- [x] `P1` `safety` `@ai` One polite HTTP client for every adapter (User-Agent, request spacing, `Retry-After`); a failed detail keeps the last known copy instead of storing an empty scope; a platform listing <50% of last run's programs does not mark the rest gone
+- [x] `P2` `feature` `@ai` `list` and `show` commands, `--json` on scan/list/show
+
+## v0 — scaffold (complete)
+
+- [x] `P1` `infra` `@ai` Project skeleton: `pyproject.toml`, `.gitignore`, `bug_spray/` package, `main.py` CLI stub, `tests/`
+- [x] `P1` `docs` `@ai` README with the honest-boundary section (what's automatable vs. stays human-in-the-loop)
+- [x] `P1` `docs` `@ai` This file + SUGGESTIONS.md
+- [x] `P1` `infra` `@me` `git init` this as its own repo and give it the standard pseudonymous identity, or say the word and I'll do it
 
 ## v2 — triage workflow
 
@@ -35,6 +38,7 @@
 
 ## v3 — opt-in recon (only after v2's guardrails exist)
 
+- [ ] `P2` `feature` `security` `@ai` Authorised assessment path, staged. Split out of the parent list's four-agent "staged specialist integrations" item. Authorisation is the gate, not an afterthought; excludes denial of service, credential theft, stealth/persistence and uncontrolled exploitation. *(split out of sentinel_fork/TODO.md; moved here from v0 -- it's the authorization framework this section's guardrails need, not scaffold work)*
 - [ ] `P2` `research` `@me` Decide which recon tools (subdomain enum, endpoint diffing) are worth wiring in, and read each target program's automated-testing rules before wiring anything
 - [ ] `P1` `safety` `@ai` Shared rate-limit + scope-guard module every recon adapter must call through — not left to each adapter to remember
 - [ ] `P3` `feature` `@ai` Recon run stored as a diffable snapshot, same pattern as program scope

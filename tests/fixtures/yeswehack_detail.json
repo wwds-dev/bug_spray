@@ -1,0 +1,59 @@
+{
+ "slug": "datadome-bot-bounty",
+ "title": "DataDome Bot Bounty",
+ "scopes": [
+  {
+   "scope": "https://bounty-nodejs.datashield.co",
+   "scope_type": "web-application",
+   "scope_type_name": "Web application",
+   "asset_value": "HIGH",
+   "report_count": null
+  },
+  {
+   "scope": "https://bounty-fastly.datashield.co",
+   "scope_type": "web-application",
+   "scope_type_name": "Web application",
+   "asset_value": "HIGH",
+   "report_count": null
+  },
+  {
+   "scope": "https://bounty-nginx.datashield.co",
+   "scope_type": "web-application",
+   "scope_type_name": "Web application",
+   "asset_value": "HIGH",
+   "report_count": null
+  },
+  {
+   "scope": "*.captcha-delivery.com",
+   "scope_type": "web-application",
+   "scope_type_name": "Web application",
+   "asset_value": "HIGH",
+   "report_count": null
+  },
+  {
+   "scope": "js.datadome.co",
+   "scope_type": "web-application",
+   "scope_type_name": "Web application",
+   "asset_value": "HIGH",
+   "report_count": null
+  },
+  {
+   "scope": "api-js.datadome.co",
+   "scope_type": "api",
+   "scope_type_name": "API",
+   "asset_value": "HIGH",
+   "report_count": null
+  }
+ ],
+ "reward_grid_default": {
+  "bounty_low": 0,
+  "bounty_medium": 500,
+  "bounty_high": 2000,
+  "bounty_critical": 5000
+ },
+ "tags": null,
+ "business_unit": {
+  "currency": "EUR"
+ },
+ "last_update_at": "2026-09-24T17:12:59+02:00"
+}

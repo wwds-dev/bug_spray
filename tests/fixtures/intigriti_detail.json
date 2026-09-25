@@ -1,0 +1,241 @@
+{
+ "assetsCollection": [
+  {
+   "content": {
+    "assetsAndGroups": [
+     {
+      "discriminator": 1,
+      "id": "11711a6c-9d83-40b0-8433-6a7b2da4e598",
+      "companyAssetId": "c76cce8e-35d5-577e-a015-ba639386e591",
+      "typeId": 7,
+      "name": "*.digitalocean.com",
+      "bountyTierId": 3
+     },
+     {
+      "discriminator": 1,
+      "id": "c84df8df-3e50-41cb-b294-aa46c7b046ca",
+      "companyAssetId": "64bdfb2d-2350-590f-9acb-2efe02e9a7d6",
+      "typeId": 4,
+      "name": "169.254.169.254",
+      "bountyTierId": 3
+     },
+     {
+      "discriminator": 1,
+      "id": "578365c7-ca6b-4755-9479-cdff58fca68f",
+      "companyAssetId": "c4b6ceea-5da3-584d-b960-ed1d77367533",
+      "typeId": 1,
+      "name": "api.digitalocean.com",
+      "bountyTierId": 3
+     },
+     {
+      "discriminator": 1,
+      "id": "36b68cb3-df95-4b43-a60d-1034a259a1a5",
+      "companyAssetId": "c85c9963-6e45-52d4-8744-72dd299f3885",
+      "typeId": 1,
+      "name": "cloud.digitalocean.com",
+      "bountyTierId": 3
+     },
+     {
+      "discriminator": 1,
+      "id": "940e5357-57f9-4bd3-8325-d65542e6c5a9",
+      "companyAssetId": "010577b7-df70-5f04-be9f-5413489e8dae",
+      "typeId": 7,
+      "name": "*.snapshooter.com",
+      "bountyTierId": 5
+     }
+    ]
+   },
+   "createdAt": 1790019196
+  },
+  {
+   "content": {
+    "assetsAndGroups": [
+     {
+      "discriminator": 1,
+      "id": "11711a6c-9d83-40b0-8433-6a7b2da4e598",
+      "companyAssetId": "c76cce8e-35d5-577e-a015-ba639386e591",
+      "typeId": 7,
+      "name": "*.digitalocean.com",
+      "bountyTierId": 3
+     },
+     {
+      "discriminator": 1,
+      "id": "c84df8df-3e50-41cb-b294-aa46c7b046ca",
+      "companyAssetId": "64bdfb2d-2350-590f-9acb-2efe02e9a7d6",
+      "typeId": 4,
+      "name": "169.254.169.254",
+      "bountyTierId": 3
+     },
+     {
+      "discriminator": 1,
+      "id": "578365c7-ca6b-4755-9479-cdff58fca68f",
+      "companyAssetId": "c4b6ceea-5da3-584d-b960-ed1d77367533",
+      "typeId": 1,
+      "name": "api.digitalocean.com",
+      "bountyTierId": 3
+     },
+     {
+      "discriminator": 1,
+      "id": "36b68cb3-df95-4b43-a60d-1034a259a1a5",
+      "companyAssetId": "c85c9963-6e45-52d4-8744-72dd299f3885",
+      "typeId": 1,
+      "name": "cloud.digitalocean.com",
+      "bountyTierId": 3
+     },
+     {
+      "discriminator": 1,
+      "id": "940e5357-57f9-4bd3-8325-d65542e6c5a9",
+      "companyAssetId": "010577b7-df70-5f04-be9f-5413489e8dae",
+      "typeId": 7,
+      "name": "*.snapshooter.com",
+      "bountyTierId": 5
+     }
+    ]
+   },
+   "createdAt": 1790276715
+  }
+ ],
+ "bountyTables": [
+  {
+   "content": {
+    "currency": "USD",
+    "bountyRows": [
+     {
+      "bountyRanges": [
+       {
+        "minScore": 0.1,
+        "maxScore": 3.9,
+        "minBounty": {
+         "value": 100.0,
+         "currency": "USD"
+        },
+        "maxBounty": {
+         "value": 450.0,
+         "currency": "USD"
+        }
+       },
+       {
+        "minScore": 4.0,
+        "maxScore": 6.9,
+        "minBounty": {
+         "value": 700.0,
+         "currency": "USD"
+        },
+        "maxBounty": {
+         "value": 1500.0,
+         "currency": "USD"
+        }
+       },
+       {
+        "minScore": 7.0,
+        "maxScore": 8.9,
+        "minBounty": {
+         "value": 2000.0,
+         "currency": "USD"
+        },
+        "maxBounty": {
+         "value": 4000.0,
+         "currency": "USD"
+        }
+       },
+       {
+        "minScore": 9.0,
+        "maxScore": 9.4,
+        "minBounty": {
+         "value": 5000.0,
+         "currency": "USD"
+        },
+        "maxBounty": {
+         "value": 8000.0,
+         "currency": "USD"
+        }
+       },
+       {
+        "minScore": 9.5,
+        "maxScore": 10.0,
+        "minBounty": {
+         "value": 8000.0,
+         "currency": "USD"
+        },
+        "maxBounty": {
+         "value": 10000.0,
+         "currency": "USD"
+        }
+       }
+      ],
+      "bountyTierId": 3
+     },
+     {
+      "bountyRanges": [
+       {
+        "minScore": 0.1,
+        "maxScore": 3.9,
+        "minBounty": {
+         "value": 50.0,
+         "currency": "USD"
+        },
+        "maxBounty": {
+         "value": 150.0,
+         "currency": "USD"
+        }
+       },
+       {
+        "minScore": 4.0,
+        "maxScore": 6.9,
+        "minBounty": {
+         "value": 300.0,
+         "currency": "USD"
+        },
+        "maxBounty": {
+         "value": 500.0,
+         "currency": "USD"
+        }
+       },
+       {
+        "minScore": 7.0,
+        "maxScore": 8.9,
+        "minBounty": {
+         "value": 600.0,
+         "currency": "USD"
+        },
+        "maxBounty": {
+         "value": 1500.0,
+         "currency": "USD"
+        }
+       },
+       {
+        "minScore": 9.0,
+        "maxScore": 9.4,
+        "minBounty": {
+         "value": 1500.0,
+         "currency": "USD"
+        },
+        "maxBounty": {
+         "value": 3000.0,
+         "currency": "USD"
+        }
+       },
+       {
+        "minScore": 9.5,
+        "maxScore": 10.0,
+        "minBounty": {
+         "value": 3000.0,
+         "currency": "USD"
+        },
+        "maxBounty": {
+         "value": 3000.0,
+         "currency": "USD"
+        }
+       }
+      ],
+      "bountyTierId": 2
+     }
+    ],
+    "rewardPolicy": null
+   },
+   "createdAt": 1730908210
+  }
+ ],
+ "confidentialityLevel": 4,
+ "status": 3
+}

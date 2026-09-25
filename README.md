@@ -37,24 +37,75 @@ off by construction rather than by configuration.
 
 ## What v1 actually does
 
-1. **Source adapters** (`bug_spray/sources/`) pull program metadata from each platform's
-   public API/directory: name, scope (in/out of scope assets), reward table, program
-   status (active/paused), and last-updated timestamp.
-2. **Store** (`bug_spray/store.py`) caches the latest snapshot per program in SQLite and
-   keeps prior snapshots so changes are diffable.
-3. **CLI** (`main.py`) runs a scan, prints/stores what changed since last run, and will
-   grow a `--selftest` flag once the source adapters are real (see
-   [conventions](../../CLAUDE.md) — every packaged app in this lab has one).
+1. **Source adapters** (`bug_spray/sources/`) read each platform's *public, anonymous*
+   program directory: name, scope (in/out of scope assets), reward table, open/paused,
+   and last-updated timestamp. No account, token or login is involved anywhere.
+2. **Store** (`bug_spray/store.py`) keeps the latest copy of every program in SQLite and
+   writes a new snapshot only when something changed, so history is diffable without an
+   hourly scan adding a thousand identical rows.
+3. **Diffing** (`bug_spray/changes.py`) turns two snapshots into what a hunter cares
+   about: **new** programs, **scope** additions/removals, **reward** changes per
+   severity, **paused/resumed**, and programs that left (**gone**) or came back to
+   their platform's public listing.
+4. **Watchlist** (`bug_spray/watchlist.py`) narrows the feed by keyword, tag and minimum
+   payout. It filters what is *reported*, never what is *stored*.
+5. **CLI** (`main.py`) — `scan`, `list`, `show`, `--selftest`.
 
-Planned sources, in rough order of how open their data is:
+v1 tracks **bounty-paying, publicly listed programs only**. VDPs (no payout),
+invite-only, and login-walled programs are not fetched.
 
-| Platform | Data available without auth | Notes |
+### Sources
+
+| Platform | How it is read (all anonymous) | Programs (2026-09-25) | Notes |
+|---|---|---|---|
+| HackerOne | The site's GraphQL directory (`hackerone.com/graphql`), 100 programs per request, scope and bounty table inline | 291 | The documented Hacker API needs a token even for public programs, so it is not used. GraphQL is the website's own, not a versioned API. |
+| Bugcrowd | `/engagements.json` → per program `changelog.json` → the latest brief `.json` | 287 | The brief is re-fetched only when its changelog entry changes. Rewards are Bugcrowd's P1–P5 ranges. |
+| Intigriti | `api/core/public/programs` → per program detail | 112 | Registered-only, terms-required and 2FA-required programs are login-walled for detail: stored from the listing only, tagged `registered-only` / `terms-required` / `2fa-required`, with no scope. |
+| YesWeHack | `api.yeswehack.com/programs` → per program detail | 60 | Detail re-fetched only when `last_update_at` changes. Out-of-scope is prose, so it is not stored as assets. |
+| Immunefi | `immunefi.com/public-api/bounties.json` | 225 | One request for everything. Invite-only skipped; programs hiding their assets are tagged `assets-hidden`. |
+
+Every request goes through one client (`sources/_http.py`) with a descriptive
+User-Agent, ≥0.35 s between requests per platform, and bounded retries that honour
+`Retry-After`. A baseline scan of all five takes about 4 minutes; an incremental one
+about 2 (Bugcrowd's per-program changelog check is most of it).
+
+**Failure handling.** One platform failing (network, rate limit, an API that changed
+shape) is reported as an error for that platform and the others still run; `scan` then
+exits 1. If a single program's detail request fails, the last stored copy is kept rather
+than storing an empty scope (which would read as "every asset removed"). If a platform
+suddenly lists fewer than half the programs it listed last time, nothing is marked gone
+— that is far likelier to be an API change than a mass closure.
+
+## Usage
+
+```bash
+cp config.example.json config.json   # all five platforms, no filters
+python main.py --selftest            # config, DB and adapters wire up — no network
+python main.py scan                  # first run stores a baseline; later runs print changes
+python main.py scan --platform immunefi --json
+python main.py list                  # stored programs matching the watchlist, highest payout first
+python main.py list --all --limit 0  # everything stored
+python main.py show bugcrowd webdotcom
+```
+
+`scan --full` re-fetches every program's detail even where the platform says nothing
+changed; use it if a platform's update timestamp ever looks unreliable. `scan --all`
+reports every change, ignoring the watchlist. Everything takes `--json`.
+
+`show` ends with a reminder that is also the rule: a stored scope is a lead, not
+authorization — re-read the live program page before testing anything.
+
+### Watchlist filters (`config.json`)
+
+| Key | Matches when | Example |
 |---|---|---|
-| HackerOne | Public program directory + scope (JSON:API) | Largest catalogue |
-| Bugcrowd | Public program briefs | Some programs are invite-only |
-| Intigriti | Public program listing | EU-heavy |
-| YesWeHack | Public program listing | |
-| Immunefi | Public program listing + reward table | Crypto/web3 only |
+| `watchlist_keywords` | any keyword is a case-insensitive substring of the name, slug, a tag, or an in-scope asset | `["api", "graphql"]` |
+| `watchlist_tags` | the program has any of these tags (see `show` / `list --json`) | `["wildcard", "smart_contract"]` |
+| `min_reward_usd` | the top published payout, converted approximately to USD, is at least this | `5000` |
+
+Each filter that is set must match; an empty one is not applied. A program with no
+published amount, or in a currency without a rate in `models.APPROX_USD_RATE`, does not
+pass a non-zero minimum.
 
 ## In-app integration (Sentinel)
 
@@ -80,42 +131,53 @@ Same rule as [`unblock_tracker`](../unblock_tracker/README.md): no hardcoded ide
 no secrets in git. Any platform API token lives in the macOS Keychain via `keyring`, loaded
 by `bug_spray/secrets.py`. Non-secret settings (which platforms to poll, poll interval,
 watchlist filters) live in a git-ignored `config.json` next to `main.py`, loaded by
-`bug_spray/config.py`.
+`bug_spray/config.py`. v1 needs no secret at all — every source is anonymous — so
+`secrets.py` is there for a future token-backed source, not used by any adapter.
 
 ## Project layout
 
 ```
 sentinel_chat_agent.py  Sentinel's in-app Bug Spray (bug_bounty) chat agent —
                         BugBountyAgent, LLM-only, no source adapters
+main.py                 CLI entry point
 bug_spray/
-  bug_spray/
-    __init__.py
-    config.py       # config.json loader — non-secret settings only
-    secrets.py       # macOS Keychain-backed API token storage
-    models.py        # Program / Scope / RewardTier dataclasses
-    store.py          # SQLite snapshot cache + diffing
-    sources/            # one module per platform, each exposing fetch_programs()
-  main.py             # CLI entry point
-  tests/
-  docs/
-  README.md            # this file
-  SUGGESTIONS.md
-  TODO.md
+  __init__.py           __version__
+  cli.py                scan / list / show / --selftest
+  config.py             config.json loader — non-secret settings only
+  secrets.py            macOS Keychain-backed token storage (unused by v1 sources)
+  models.py             Program / Scope / RewardTier, reward merging, USD approximation
+  store.py              SQLite snapshots (written on change) + programs seen/gone
+  changes.py            snapshot diff: new, scope, rewards, paused/resumed, gone/back
+  watchlist.py          keyword / tag / min-reward filters
+  sources/
+    __init__.py         registry, fetch_all (parallel, per-platform errors), fallback helper
+    _http.py            the one polite HTTP client
+    hackerone.py  bugcrowd.py  intigriti.py  yeswehack.py  immunefi.py
+tests/
+  fixtures/             trimmed real responses from each platform (2026-09-25)
+  test_sources.py       adapters against the fixtures, offline
+  test_scan.py          store, diffing, watchlist, CLI
+  test_selftest.py
 ```
 
 ## Status
 
-The framework is built: config loading, the SQLite snapshot store with diffing, the CLI
-(`--selftest` and `scan`), and the `Program`/`Scope`/`RewardTier` models are all in place
-and covered by tests (`tests/test_selftest.py`). No platform adapter is implemented yet —
-`bug_spray/sources/hackerone.py` is registered but its `fetch_programs()` raises
-`NotImplementedError` until the real HackerOne fetch is written (see [TODO.md](TODO.md),
-v1). Nothing in this project makes network calls, touches a real bug bounty program, or
-handles a real credential until that changes.
+**v1 complete (2026-09-25).** All five adapters are live against the real platforms,
+with offline tests over trimmed copies of their responses (`pytest`, 46 tests).
+Everything it fetches is public program metadata; nothing here touches a program's
+assets. v2 (triage board, report template, scope-confirmation gate) is next — see
+[TODO.md](TODO.md).
 
 ## Environment
 
-Own git repo (like every project under `active/`), `uv` venv, Python ≥3.11, PySide6 not
+Own git repo (nested under `sentinel_fork/agents/`), `uv` venv, Python ≥3.11, PySide6 not
 yet needed — this starts as a CLI tool and only grows a GUI (via `lab_hub`) if the CLI
 workflow proves useful enough to want one. Follows the pseudonymous commit identity used
 across this lab.
+
+`_Admin/rebuild_envs.sh` only walks the top level of `active/`, so it never reaches this
+nested repo. Rebuild the venv here directly, on the Mac:
+
+```bash
+uv venv .venv && uv pip install -r requirements.txt --python .venv/bin/python
+```

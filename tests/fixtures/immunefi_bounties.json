@@ -1,0 +1,186 @@
+[
+ {
+  "slug": "openzeppelin",
+  "project": "OpenZeppelin",
+  "assets": [
+   {
+    "url": "https://github.com/OpenZeppelin/uniswap-hooks",
+    "type": "smart_contract"
+   },
+   {
+    "url": "https://github.com/OpenZeppelin/openzeppelin-contracts",
+    "type": "smart_contract"
+   },
+   {
+    "url": "https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable",
+    "type": "smart_contract"
+   }
+  ],
+  "rewards": [
+   {
+    "id": 50738,
+    "primacy": null,
+    "severity": "critical",
+    "assetType": "smart_contract",
+    "maxReward": 25000,
+    "minReward": 5000,
+    "rewardModel": "range",
+    "rewardCalculationPercentage": 10
+   },
+   {
+    "id": 50739,
+    "primacy": null,
+    "severity": "high",
+    "assetType": "smart_contract",
+    "maxReward": 5000,
+    "minReward": 2500,
+    "rewardModel": "range"
+   },
+   {
+    "id": 50740,
+    "primacy": null,
+    "severity": "medium",
+    "assetType": "smart_contract",
+    "fixedReward": 2500,
+    "rewardModel": "fixed"
+   },
+   {
+    "id": 50741,
+    "primacy": null,
+    "severity": "low",
+    "assetType": "smart_contract",
+    "fixedReward": 1000,
+    "rewardModel": "fixed"
+   }
+  ],
+  "maxBounty": 25000,
+  "isPaused": false,
+  "inviteOnly": false,
+  "hideAssetsInScope": null,
+  "endDate": null,
+  "updatedDate": "2026-09-08T17:10:25.882Z",
+  "ecosystem": [],
+  "language": [
+   "Solidity"
+  ],
+  "productType": [
+   "Services"
+  ],
+  "projectType": [
+   "Defi",
+   "Exchange",
+   "NFT"
+  ]
+ },
+ {
+  "slug": "tetu",
+  "project": "Tetu",
+  "assets": [],
+  "rewards": [
+   {
+    "id": 30049,
+    "primacy": null,
+    "severity": "critical",
+    "assetType": "smart_contract",
+    "maxReward": 2000,
+    "rewardModel": "up_to",
+    "rewardCalculationPercentage": 10
+   }
+  ],
+  "maxBounty": 2000,
+  "isPaused": false,
+  "inviteOnly": true,
+  "hideAssetsInScope": true,
+  "endDate": null,
+  "updatedDate": "2026-06-08T15:36:18.598Z",
+  "ecosystem": [
+   "Polygon"
+  ],
+  "language": [
+   "Solidity"
+  ],
+  "productType": [
+   "Asset Management",
+   "DEX",
+   "Lending",
+   "Token",
+   "Yield Aggregator"
+  ],
+  "projectType": [
+   "Defi"
+  ]
+ },
+ {
+  "slug": "arbitrum",
+  "project": "Arbitrum",
+  "assets": [
+   {
+    "url": "https://github.com/OffchainLabs/token-bridge-contracts/blob/main/contracts/tokenbridge/arbitrum/IArbToken.sol",
+    "type": "smart_contract"
+   },
+   {
+    "url": "https://github.com/OffchainLabs/token-bridge-contracts/blob/main/contracts/tokenbridge/arbitrum/L2ArbitrumMessenger.sol",
+    "type": "smart_contract"
+   },
+   {
+    "url": "https://github.com/OffchainLabs/token-bridge-contracts/blob/main/contracts/tokenbridge/arbitrum/StandardArbERC20.sol",
+    "type": "smart_contract"
+   }
+  ],
+  "rewards": [
+   {
+    "id": 51104,
+    "primacy": null,
+    "severity": "critical",
+    "assetType": "smart_contract",
+    "maxReward": 2000000,
+    "rewardModel": "up_to",
+    "rewardCalculationPercentage": 10
+   },
+   {
+    "id": 51105,
+    "primacy": null,
+    "severity": "high",
+    "assetType": "smart_contract",
+    "maxReward": 30000,
+    "minReward": 10000,
+    "rewardModel": "range"
+   },
+   {
+    "id": 51106,
+    "primacy": null,
+    "severity": "medium",
+    "assetType": "smart_contract",
+    "fixedReward": 5000,
+    "rewardModel": "fixed"
+   },
+   {
+    "id": 51107,
+    "primacy": null,
+    "severity": "low",
+    "assetType": "smart_contract",
+    "fixedReward": 1000,
+    "rewardModel": "fixed"
+   }
+  ],
+  "maxBounty": 2000000,
+  "isPaused": false,
+  "inviteOnly": false,
+  "hideAssetsInScope": null,
+  "endDate": null,
+  "updatedDate": "2026-09-24T13:37:49.020Z",
+  "ecosystem": [
+   "Arbitrum",
+   "ETH"
+  ],
+  "language": [
+   "Solidity"
+  ],
+  "productType": [
+   "L2"
+  ],
+  "projectType": [
+   "Blockchain"
+  ]
+ }
+]
