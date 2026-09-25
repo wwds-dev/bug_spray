@@ -1,6 +1,6 @@
 [project]
 name = "bug-spray"
-version = "0.1.0"
+version = "1.0.0"
 description = "Bug bounty program radar & triage assistant — discovery and monitoring, human-in-the-loop triage"
 readme = "README.md"
 requires-python = ">=3.11"

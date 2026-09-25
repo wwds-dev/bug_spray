@@ -45,3 +45,13 @@ def test_hackerone_adapter_registered():
 
 def test_secrets_backend_name_does_not_raise():
     assert isinstance(secrets.backend_name(), str)
+
+
+def test_selftest_command_passes_on_a_fresh_checkout(tmp_path, monkeypatch, capsys):
+    from bug_spray import cli
+
+    monkeypatch.setattr(config, "CONFIG_PATH", tmp_path / "config.json")
+    config.save(config.Settings(data_dir=str(tmp_path / "data")), tmp_path / "config.json")
+    assert cli.main(["--selftest"]) == 0
+    out = capsys.readouterr().out
+    assert "OK" in out and "immunefi" in out

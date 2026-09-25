@@ -1,0 +1,92 @@
+{
+ "data": {
+  "teams": {
+   "pageInfo": {
+    "hasNextPage": false,
+    "endCursor": null
+   },
+   "edges": [
+    {
+     "node": {
+      "handle": "common_codes",
+      "name": "d-you App & German EUDI Wallet Ecosystem",
+      "url": "https://hackerone.com/common_codes",
+      "offers_bounties": true,
+      "submission_state": "open",
+      "last_updated_at": "2026-09-16T14:57:00.813Z",
+      "currency": "usd",
+      "base_bounty": 50,
+      "bounty_table": {
+       "bounty_table_rows": {
+        "nodes": [
+         {
+          "low": 200,
+          "medium": 2000,
+          "high": 6000,
+          "critical": 15000
+         },
+         {
+          "low": 100,
+          "medium": 1200,
+          "high": 4000,
+          "critical": 10000
+         }
+        ]
+       }
+      },
+      "structured_scopes": {
+       "pageInfo": {
+        "hasNextPage": false,
+        "endCursor": null
+       },
+       "edges": [
+        {
+         "node": {
+          "asset_identifier": "d-you Wallet iOS Test",
+          "asset_type": "TESTFLIGHT",
+          "eligible_for_submission": true
+         }
+        },
+        {
+         "node": {
+          "asset_identifier": "d-you Wallet Android Test",
+          "asset_type": "GOOGLE_PLAY_APP_ID",
+          "eligible_for_submission": true
+         }
+        },
+        {
+         "node": {
+          "asset_identifier": "https://wallet-backend-sandbox.apps.sandbox.nwb.youniqx.com/v1/wpb",
+          "asset_type": "API",
+          "eligible_for_submission": true
+         }
+        },
+        {
+         "node": {
+          "asset_identifier": "https://wallet-backend-sandbox.apps.sandbox.nwb.youniqx.com/v1/rwsca",
+          "asset_type": "API",
+          "eligible_for_submission": true
+         }
+        },
+        {
+         "node": {
+          "asset_identifier": "OOS: All domains from [*.]bundesdruckerei.de",
+          "asset_type": "API",
+          "eligible_for_submission": false
+         }
+        },
+        {
+         "node": {
+          "asset_identifier": "OOS: All other domains from [*.]youniqx.com",
+          "asset_type": "API",
+          "eligible_for_submission": false
+         }
+        }
+       ]
+      }
+     }
+    }
+   ]
+  }
+ }
+}

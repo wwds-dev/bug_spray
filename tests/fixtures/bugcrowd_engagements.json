@@ -1,0 +1,70 @@
+{
+ "engagements": [
+  {
+   "name": "Web.com Bug Bounty",
+   "tagline": "You say it. We build it. It's as easy as Web.com! ",
+   "briefUrl": "/engagements/webdotcom",
+   "backgroundColor": "#2D72B4",
+   "logoUrl": "https://logos.bugcrowdusercontent.com/logos/11c1/3c18/ae692a84/becbbdbeae7c1a3b8507143c2d373e2d_webdotcom_gimp.jpg",
+   "rewardSummary": {
+    "summary": "Points - $3,000",
+    "hint": "Up to $5,000",
+    "minReward": "Points",
+    "maxReward": "$3,000",
+    "compensationSummary": "Up to $5,000",
+    "compensationHint": "max reward"
+   },
+   "isDemo": false,
+   "scopeRank": 1,
+   "isBanned": false,
+   "isFollowing": false,
+   "industryName": "Technology",
+   "accessStatus": "open",
+   "paymentAllocationUrl": null,
+   "badgeVariant": null,
+   "endsAt": null,
+   "productEngagementType": {
+    "label": "Bug Bounty",
+    "iconVariant": "bug-bounty"
+   },
+   "subscriptionUrl": "/webdotcom/engagement_subscribers",
+   "isPrivate": false,
+   "serviceLevel": "Platform"
+  },
+  {
+   "name": "HostGator LATAM Bug Bounty",
+   "tagline": "HostGator LATAM is the division of the global web hosting provider HostGator that serves Latin American markets, offering localized web hosting solutions, including shared hosting, WordPress hosting, and VPS hosting, tailored to the needs of businesses and individuals in the region.",
+   "briefUrl": "/engagements/hostgator-latam-bb",
+   "backgroundColor": "#f98f48",
+   "logoUrl": "https://logos.bugcrowdusercontent.com/logos/746a/65fe/37fbf960/8434d215f5ea8617bcd48b53664d246a_latam.jpeg",
+   "rewardSummary": {
+    "summary": "Points - $2,500",
+    "hint": null,
+    "minReward": "Points",
+    "maxReward": "$2,500",
+    "compensationSummary": null,
+    "compensationHint": null
+   },
+   "isDemo": false,
+   "scopeRank": 1,
+   "isBanned": false,
+   "isFollowing": false,
+   "industryName": "Technology",
+   "accessStatus": "open",
+   "paymentAllocationUrl": null,
+   "badgeVariant": null,
+   "endsAt": null,
+   "productEngagementType": {
+    "label": "Bug Bounty",
+    "iconVariant": "bug-bounty"
+   },
+   "subscriptionUrl": "/hostgator-latam-bb/engagement_subscribers",
+   "isPrivate": false,
+   "serviceLevel": "Platform"
+  }
+ ],
+ "paginationMeta": {
+  "limit": 24,
+  "totalCount": 2
+ }
+}

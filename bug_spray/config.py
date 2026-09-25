@@ -23,8 +23,10 @@ class Settings:
     # fresh checkout should not silently start hitting every platform.
     enabled_platforms: list[str] = field(default_factory=list)
 
-    # Only surface programs matching these keywords/tags. Empty = no filter.
+    # Watchlist filters — narrow what `scan` reports and `list` prints, never
+    # what is stored. Empty/0 = filter not applied. See watchlist.py.
     watchlist_keywords: list[str] = field(default_factory=list)
+    watchlist_tags: list[str] = field(default_factory=list)
     min_reward_usd: float = 0.0
 
     poll_interval_minutes: int = 60
@@ -44,6 +46,12 @@ class Settings:
             problems.append(f"Unknown platform(s) in enabled_platforms: {sorted(unknown)}")
         if self.poll_interval_minutes < 1:
             problems.append("poll_interval_minutes must be at least 1.")
+        for name in ("enabled_platforms", "watchlist_keywords", "watchlist_tags"):
+            value = getattr(self, name)
+            if not isinstance(value, list) or not all(isinstance(v, str) and v.strip() for v in value):
+                problems.append(f"{name} must be a list of non-empty strings.")
+        if not isinstance(self.min_reward_usd, (int, float)) or self.min_reward_usd < 0:
+            problems.append("min_reward_usd must be a number, 0 or more.")
         return problems
 
 

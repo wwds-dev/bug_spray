@@ -1,6 +1,7 @@
 {
-  "enabled_platforms": [],
+  "enabled_platforms": ["hackerone", "bugcrowd", "intigriti", "yeswehack", "immunefi"],
   "watchlist_keywords": [],
+  "watchlist_tags": [],
   "min_reward_usd": 0,
   "poll_interval_minutes": 60,
   "data_dir": "data"

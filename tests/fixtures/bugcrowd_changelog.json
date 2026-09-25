@@ -1,0 +1,20 @@
+{
+ "changelogs": [
+  {
+   "id": "cdf0a5a7-3e14-4bd2-8997-a9567e0bb63e",
+   "publishedAt": "2026-09-11T15:03:27.462Z",
+   "tags": "brief",
+   "changelogState": "Latest",
+   "changelogShowUrl": "/engagements/webdotcom/changelog/cdf0a5a7-3e14-4bd2-8997-a9567e0bb63e",
+   "publishedBy": "bugcrowd"
+  },
+  {
+   "id": "3f5d9ee5-4636-442f-a608-4b1457a92f23",
+   "publishedAt": "2026-09-11T14:50:09.202Z",
+   "tags": "targets,brief",
+   "changelogState": null,
+   "changelogShowUrl": "/engagements/webdotcom/changelog/3f5d9ee5-4636-442f-a608-4b1457a92f23",
+   "publishedBy": "bugcrowd"
+  }
+ ]
+}

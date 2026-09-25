@@ -8,10 +8,9 @@ Status: `IDEA` · `CONSIDERING` · `PLANNED` · `DONE` · `REJECTED`
 
 | # | Suggestion | Category | Effort | Status |
 |---|---|---|---|---|
-| 1 | HackerOne public program directory adapter (JSON:API, no auth needed for public programs) | feature | M | PLANNED |
-| 2 | Bugcrowd, Intigriti, YesWeHack, Immunefi adapters behind the same `fetch_programs()` interface | feature | L | IDEA |
-| 3 | Snapshot diffing: flag scope additions, reward changes, and newly-launched programs since last run | feature | M | PARTIAL — scope added/removed diffing shipped in `store.diff_scope`; reward-change and new-program detection still open |
-| 4 | Watchlist filters (tech stack keywords, minimum reward, program tags) so the feed isn't 500 programs wide | feature | S | IDEA |
+| 15 | Opt-in VDP tracking (programs with no payout) — v1 deliberately fetches bounty-paying programs only; VDPs are useful for reputation-building, and Bugcrowd's would add ~440 requests per scan | feature | S | IDEA |
+| 16 | Scheduled scans — `poll_interval_minutes` is in config but nothing reads it yet; a launchd agent (lab pattern) running `scan --json` and keeping the last report for v2's badge | feature | S | IDEA |
+| 17 | Token-backed HackerOne/Intigriti sources for the private and login-walled programs *you* are invited to, via `secrets.py` (Keychain) — needs your own API tokens | feature | M | IDEA |
 | 5 | Digest notification (desktop notification or a `lab_hub` badge) when a watched program changes | feature | S | IDEA |
 
 ## Triage workflow (human-in-the-loop)
@@ -43,6 +42,9 @@ Status: `IDEA` · `CONSIDERING` · `PLANNED` · `DONE` · `REJECTED`
 | Suggestion | When |
 |---|---|
 | `sentinel_chat_agent.py` (`BugBountyAgent`) shipped as Sentinel's in-app Bug Spray chat agent, and documented in README | 2026-09-15 |
+| #1 HackerOne adapter (anonymous GraphQL directory — the JSON:API needs a token) and #2 Bugcrowd, Intigriti, YesWeHack, Immunefi adapters behind the same `fetch_programs()` interface | 2026-09-25 |
+| #3 Snapshot diffing: scope added/removed, reward changes per severity, new programs, paused/resumed, gone/back | 2026-09-25 |
+| #4 Watchlist filters: keywords, tags, minimum reward (approximate USD) | 2026-09-25 |
 
 ## Rejected
 
