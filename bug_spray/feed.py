@@ -7,18 +7,23 @@ from .models import Program
 from .store import Store
 
 
-def read_feed(settings: config.Settings) -> dict:
+def read_feed(settings: config.Settings, show_all: bool = False) -> dict:
+    """Saved programs and recent changes; `show_all` ignores the watchlist filters."""
+
+    def wanted(program: Program) -> bool:
+        return show_all or watchlist.matches(program, settings)
+
     if not settings.db_path.exists():
         return {"last_scan": None, "poll_interval_minutes": settings.poll_interval_minutes,
                 "programs": [], "changes": []}
     db = Store(settings.db_path, readonly=True)
     try:
-        programs = [p for p in db.current_programs() if watchlist.matches(p, settings)]
+        programs = [p for p in db.current_programs() if wanted(p)]
         programs.sort(key=lambda p: (p.active, p.max_reward_usd() or 0), reverse=True)
         events = []
         for event in db.recent_changes(200):
             payload = db.latest(event["program"]["platform"], event["program"]["slug"])
-            if payload and watchlist.matches(Program.from_dict(payload), settings):
+            if payload and wanted(Program.from_dict(payload)):
                 events.append(event)
         return {
             "last_scan": db.last_scan(),

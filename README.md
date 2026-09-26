@@ -55,6 +55,10 @@ off by construction rather than by configuration.
    if the last one is older than `poll_interval_minutes`; while Sentinel stays
    open, it checks again on that interval. **Scan now** runs it immediately.
    Scans do not run while Sentinel is closed. The feed never probes a target.
+   The panel also covers the rest of the CLI: a platform filter, **Show all**
+   (like `--all`), **Watchlist…** (edits `config.json`: platforms, keywords, tags,
+   minimum payout), **Full details…** (like `show`), and **Full re-scan** (like
+   `scan --full`).
 
 v1 tracks **bounty-paying, publicly listed programs only**. VDPs (no payout),
 invite-only, and login-walled programs are not fetched.
