@@ -9,7 +9,7 @@ Status: `IDEA` · `CONSIDERING` · `PLANNED` · `DONE` · `REJECTED`
 | # | Suggestion | Category | Effort | Status |
 |---|---|---|---|---|
 | 15 | Opt-in VDP tracking (programs with no payout) — v1 deliberately fetches bounty-paying programs only; VDPs are useful for reputation-building, and Bugcrowd's would add ~440 requests per scan | feature | S | IDEA |
-| 16 | Scheduled scans — `poll_interval_minutes` is in config but nothing reads it yet; a launchd agent (lab pattern) running `scan --json` and keeping the last report for v2's badge | feature | S | IDEA |
+| 16 | Optional launchd scans while Sentinel is closed. The in-app feed already scans on the configured interval while Sentinel runs; an OS job would extend that to times the app is closed. | feature | S | IDEA |
 | 17 | Token-backed HackerOne/Intigriti sources for the private and login-walled programs *you* are invited to, via `secrets.py` (Keychain) — needs your own API tokens | feature | M | IDEA |
 | 5 | Digest notification (desktop notification or a `lab_hub` badge) when a watched program changes | feature | S | IDEA |
 
@@ -45,6 +45,7 @@ Status: `IDEA` · `CONSIDERING` · `PLANNED` · `DONE` · `REJECTED`
 | #1 HackerOne adapter (anonymous GraphQL directory — the JSON:API needs a token) and #2 Bugcrowd, Intigriti, YesWeHack, Immunefi adapters behind the same `fetch_programs()` interface | 2026-09-25 |
 | #3 Snapshot diffing: scope added/removed, reward changes per severity, new programs, paused/resumed, gone/back | 2026-09-25 |
 | #4 Watchlist filters: keywords, tags, minimum reward (approximate USD) | 2026-09-25 |
+| Sentinel Program radar: saved program and change feed, searchable list, program link and report handoff; interval scans while the app runs | 2026-09-26 |
 
 ## Rejected
 

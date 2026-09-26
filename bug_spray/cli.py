@@ -7,6 +7,7 @@
                                               stored programs, highest payout first
     python main.py show PLATFORM SLUG [--json]
                                               one program's scope and reward table
+    python main.py feed [--json]               saved program feed for Sentinel
 
 No command here performs recon or touches a program's actual assets — see
 the honest-boundary section in README.md.
@@ -15,14 +16,17 @@ the honest-boundary section in README.md.
 from __future__ import annotations
 
 import argparse
+import fcntl
 import json
 import logging
+import os
 import sys
 from dataclasses import asdict
 from datetime import UTC, datetime
 
 from . import __version__, config, secrets, sources, store, watchlist
 from .changes import ProgramChanges, diff_program
+from .feed import read_feed
 from .models import Program
 
 # If a platform suddenly omits more than this share of the programs it listed
@@ -123,8 +127,8 @@ def _describe(change: ProgramChanges) -> list[str]:
     return lines
 
 
-def scan(platforms: list[str] | None = None, full: bool = False, show_all: bool = False,
-         as_json: bool = False) -> int:
+def _scan_impl(platforms: list[str] | None = None, full: bool = False, show_all: bool = False,
+               as_json: bool = False) -> int:
     settings = _load_settings()
     if settings is None:
         return 1
@@ -174,6 +178,7 @@ def scan(platforms: list[str] | None = None, full: bool = False, show_all: bool 
                     "baseline": baseline,
                     "note": note,
                 }
+            db.record_scan(now, summary, changes)
     finally:
         db.close()
 
@@ -204,7 +209,44 @@ def scan(platforms: list[str] | None = None, full: bool = False, show_all: bool 
     return 1 if any("error" in info for info in summary.values()) else 0
 
 
+def scan(platforms: list[str] | None = None, full: bool = False, show_all: bool = False,
+         as_json: bool = False) -> int:
+    """Avoid overlapping GUI and CLI scans of the same database."""
+    settings = _load_settings()
+    if settings is None:
+        return 1
+    if not (platforms or settings.enabled_platforms):
+        return _scan_impl(platforms, full, show_all, as_json)
+    settings.db_path.parent.mkdir(parents=True, exist_ok=True)
+    fd = os.open(settings.db_path.parent / "scan.lock", os.O_CREAT | os.O_RDWR, 0o600)
+    try:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            message = "A Bug Spray scan is already running."
+            print(json.dumps({"error": message}) if as_json else message)
+            return 1
+        return _scan_impl(platforms, full, show_all, as_json)
+    finally:
+        os.close(fd)
+
+
 # ---------------------------------------------------------------- list / show
+
+
+def feed(as_json: bool = False) -> int:
+    """Read the saved feed; this command never contacts a platform."""
+    settings = _load_settings()
+    if settings is None:
+        return 1
+    data = read_feed(settings)
+    if as_json:
+        print(json.dumps(data))
+    else:
+        print(f"{len(data['programs'])} watched programs; {len(data['changes'])} recent changes")
+        if data["last_scan"]:
+            print(f"Last scan: {data['last_scan']['scanned_at']}")
+    return 0
 
 
 def list_programs(platform: str | None = None, show_all: bool = False, limit: int = 50,
@@ -314,6 +356,9 @@ def main(argv: list[str] | None = None) -> int:
     show_p.add_argument("slug")
     show_p.add_argument("--json", action="store_true")
 
+    feed_p = commands.add_parser("feed", help="saved programs and recent changes (no network)")
+    feed_p.add_argument("--json", action="store_true")
+
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.WARNING, format="  warning: %(message)s")
 
@@ -323,6 +368,8 @@ def main(argv: list[str] | None = None) -> int:
         return list_programs(args.platform, args.all, args.limit, args.json)
     if args.command == "show":
         return show(args.platform, args.slug, args.json)
+    if args.command == "feed":
+        return feed(args.json)
     if args.command == "scan":
         return scan(args.platform, args.full, args.all, args.json)
     return scan()

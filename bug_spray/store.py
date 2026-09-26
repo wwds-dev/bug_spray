@@ -1,12 +1,14 @@
-"""SQLite snapshot cache for program metadata, with diffing between runs.
+"""SQLite snapshot cache for program metadata, scan history and diffing.
 
-Two tables:
+Four tables:
 - `snapshots` — one row per program *per change*: a scan only writes a row
   when the program differs from its latest stored copy, so an hourly scan of
   ~1,000 unchanged programs adds nothing.
 - `programs` — one row per program ever seen: first/last seen, and `gone_at`
   once it drops out of its platform's public listing. Created on open and
   back-filled from `snapshots`, so databases from v0 upgrade in place.
+- `scan_runs` — one row per completed scan, including platform errors.
+- `change_events` — recent program changes for the in-app feed.
 """
 
 from __future__ import annotations
@@ -38,6 +40,19 @@ CREATE TABLE IF NOT EXISTS programs (
     gone_at TEXT,
     PRIMARY KEY (platform, slug)
 );
+CREATE TABLE IF NOT EXISTS scan_runs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    scanned_at TEXT NOT NULL,
+    summary TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS change_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    scanned_at TEXT NOT NULL,
+    platform TEXT NOT NULL,
+    slug TEXT NOT NULL,
+    payload TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_change_events_recent ON change_events (id DESC);
 INSERT OR IGNORE INTO programs (platform, slug, first_seen, last_seen)
     SELECT platform, slug, MIN(fetched_at), MAX(fetched_at) FROM snapshots GROUP BY platform, slug;
 """
@@ -54,11 +69,14 @@ def _now() -> str:
 
 
 class Store:
-    def __init__(self, db_path: Path):
-        db_path.parent.mkdir(parents=True, exist_ok=True)
-        self._conn = sqlite3.connect(db_path)
-        self._conn.executescript(SCHEMA)
-        self._conn.commit()
+    def __init__(self, db_path: Path, *, readonly: bool = False):
+        if readonly:
+            self._conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+        else:
+            db_path.parent.mkdir(parents=True, exist_ok=True)
+            self._conn = sqlite3.connect(db_path)
+            self._conn.executescript(SCHEMA)
+            self._conn.commit()
         self._batching = False
 
     def close(self) -> None:
@@ -166,6 +184,41 @@ class Store:
         if platform:
             query, args = query + " AND s.platform = ?", (platform,)
         return [Program.from_dict(json.loads(row[0])) for row in self._conn.execute(query, args)]
+
+    def record_scan(self, scanned_at: str, summary: dict, changes: list) -> None:
+        """Keep the last scan and its events in the same transaction as snapshots."""
+        self._conn.execute(
+            "INSERT INTO scan_runs (scanned_at, summary) VALUES (?, ?)",
+            (scanned_at, json.dumps(summary)),
+        )
+        self._conn.executemany(
+            "INSERT INTO change_events (scanned_at, platform, slug, payload) VALUES (?, ?, ?, ?)",
+            [(scanned_at, c.program.platform, c.program.slug, json.dumps(c.to_dict())) for c in changes],
+        )
+        self._commit()
+
+    def last_scan(self) -> dict | None:
+        try:
+            row = self._conn.execute(
+                "SELECT scanned_at, summary FROM scan_runs ORDER BY id DESC LIMIT 1"
+            ).fetchone()
+        except sqlite3.OperationalError:
+            row = None  # v1 database, before scan history existed
+        if row:
+            return {"scanned_at": row[0], "platforms": json.loads(row[1])}
+        # v1 databases have snapshots but no scan_runs. Keep their last-seen
+        # time so opening Sentinel does not immediately repeat a fresh scan.
+        old = self._conn.execute("SELECT MAX(last_seen) FROM programs").fetchone()[0]
+        return {"scanned_at": old, "platforms": {}} if old else None
+
+    def recent_changes(self, limit: int = 100) -> list[dict]:
+        try:
+            rows = self._conn.execute(
+                "SELECT scanned_at, payload FROM change_events ORDER BY id DESC LIMIT ?", (limit,)
+            ).fetchall()
+        except sqlite3.OperationalError:
+            return []
+        return [dict(json.loads(payload), scanned_at=scanned_at) for scanned_at, payload in rows]
 
 
 def diff_scope(current: dict, previous: dict | None) -> dict[str, list[str]]:

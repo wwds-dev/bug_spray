@@ -1,6 +1,8 @@
 """Store, diffing, watchlist and the `scan` / `list` / `show` commands, offline."""
 
 import json
+import fcntl
+import os
 import sqlite3
 from dataclasses import asdict, replace
 
@@ -8,6 +10,7 @@ import pytest
 
 from bug_spray import cli, config, sources, store, watchlist
 from bug_spray.changes import diff_program
+from bug_spray.feed import read_feed
 from bug_spray.models import Program, RewardTier, Scope, merge_tiers
 
 
@@ -178,6 +181,37 @@ def test_scan_baseline_then_changes(lab, capsys):
     report = json.loads(capsys.readouterr().out)
     kinds = {c["program"]["slug"]: c["kinds"] for c in report["changes"]}
     assert kinds == {"a": ["scope"], "c": ["new"], "b": ["gone"]}
+    saved = read_feed(config.load())
+    assert saved["last_scan"]["scanned_at"] == report["scanned_at"]
+    assert {c["program"]["slug"] for c in saved["changes"]} == {"a", "b", "c"}
+    assert {p["slug"] for p in saved["programs"]} == {"a", "c"}
+    assert cli.main(["feed", "--json"]) == 0
+    assert len(json.loads(capsys.readouterr().out)["changes"]) == 3
+
+
+def test_feed_reads_v1_database_without_writing(tmp_path):
+    path = tmp_path / "old.sqlite3"
+    conn = sqlite3.connect(path)
+    conn.executescript(
+        "CREATE TABLE snapshots (id INTEGER PRIMARY KEY AUTOINCREMENT, platform TEXT NOT NULL, "
+        "slug TEXT NOT NULL, fetched_at TEXT NOT NULL, payload TEXT NOT NULL);"
+        "CREATE TABLE programs (platform TEXT, slug TEXT, first_seen TEXT, last_seen TEXT, gone_at TEXT);"
+    )
+    conn.execute("INSERT INTO snapshots (platform, slug, fetched_at, payload) VALUES (?,?,?,?)",
+                 ("hackerone", "old", "2026-09-25T00:00:00+00:00", json.dumps(asdict(make("old")))))
+    conn.execute("INSERT INTO programs VALUES (?,?,?,?,?)",
+                 ("hackerone", "old", "2026-09-25T00:00:00+00:00", "2026-09-25T00:00:00+00:00", None))
+    conn.commit()
+    conn.close()
+    settings = config.Settings(data_dir=str(tmp_path))
+    path.rename(settings.db_path)
+    result = read_feed(settings)
+    assert result["programs"][0]["slug"] == "old"
+    assert result["changes"] == []
+    assert result["last_scan"]["scanned_at"] == "2026-09-25T00:00:00+00:00"
+    conn = sqlite3.connect(settings.db_path)
+    assert conn.execute("SELECT name FROM sqlite_master WHERE name='scan_runs'").fetchone() is None
+    conn.close()
 
 
 def test_scan_does_not_mark_half_a_platform_gone(lab, capsys):
@@ -193,6 +227,18 @@ def test_scan_reports_platform_error_and_fails(lab, monkeypatch, capsys):
     monkeypatch.setitem(sources.REGISTRY, "hackerone", lambda known: (_ for _ in ()).throw(ValueError("x")))
     assert cli.main(["scan"]) == 1
     assert "ERROR" in capsys.readouterr().out
+
+
+def test_scan_refuses_overlap(lab, capsys):
+    lock_path = config.load().db_path.parent / "scan.lock"
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    fd = os.open(lock_path, os.O_CREAT | os.O_RDWR, 0o600)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        assert cli.main(["scan", "--json"]) == 1
+        assert "already running" in json.loads(capsys.readouterr().out)["error"]
+    finally:
+        os.close(fd)
 
 
 def test_scan_watchlist_filters_report_not_storage(lab, capsys):
