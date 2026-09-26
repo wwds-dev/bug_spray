@@ -10,7 +10,7 @@ Status: `IDEA` · `CONSIDERING` · `PLANNED` · `DONE` · `REJECTED`
 |---|---|---|---|---|
 | 15 | Opt-in VDP tracking (programs with no payout) — v1 deliberately fetches bounty-paying programs only; VDPs are useful for reputation-building, and Bugcrowd's would add ~440 requests per scan | feature | S | IDEA |
 | 16 | Optional launchd scans while Sentinel is closed. The in-app feed already scans on the configured interval while Sentinel runs; an OS job would extend that to times the app is closed. | feature | S | IDEA |
-| 17 | Token-backed HackerOne/Intigriti sources for the private and login-walled programs *you* are invited to, via `secrets.py` (Keychain) — needs your own API tokens | feature | M | IDEA |
+| 17 | Token-backed HackerOne/Intigriti sources for the private and login-walled programs *you* are invited to, via `secrets.py` (Keychain) — needs your own API tokens. Now committed work: TODO.md v2 → *Logged-in sources* | feature | M | PLANNED |
 | 5 | Digest notification (desktop notification or a `lab_hub` badge) when a watched program changes | feature | S | IDEA |
 
 ## Triage workflow (human-in-the-loop)

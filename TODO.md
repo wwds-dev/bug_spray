@@ -38,6 +38,23 @@
 - [ ] `P1` `safety` `@ai` Scope-confirmation gate in front of anything that will eventually touch a live target: user must confirm today's scope before a recon step is allowed to run
 - [ ] `P3` `feature` `@ai` Desktop notification / `lab_hub` badge on watchlist changes
 
+### Logged-in sources — your own HackerOne and Intigriti accounts
+
+v1 reads only what is public without an account. That leaves out private programs you are
+invited to on HackerOne, and the scope of 22 Intigriti programs that sit behind a login:
+registered-only, terms-required and 2FA-required. They are listed today, but with no scope.
+Both platforms have an official researcher API for this. Both answered `401` without a
+token when checked on 2026-09-25. This uses those APIs with *your* token. It is not scraping
+login pages, which stays rejected.
+
+- [ ] `P2` `infra` `@me` HackerOne: create an API token on your own hacker account (Settings → API Token) and note the API username that goes with it. The Hacker API authenticates with *username + token*, so both are needed. Enter them yourself with the `auth` command below; never paste them into a chat, config file or commit.
+- [ ] `P2` `infra` `@me` Intigriti: create a personal researcher API token on your account and enter it with `auth`. Accept each program's terms and turn on 2FA in Intigriti's own site first. Bug Spray must never accept terms for you.
+- [ ] `P1` `security` `@ai` `auth` command: `auth set hackerone|intigriti` (hidden prompt, nothing echoed or logged), `auth status` (shows only whether a credential is stored), `auth clear`. Stored in the Keychain via `secrets.py`. That needs a second Keychain field for HackerOne's username; add it without changing the existing token key.
+- [ ] `P2` `feature` `@ai` HackerOne logged-in source: use the Hacker API (`api.hackerone.com/v1/hackers/programs` plus each program's structured scopes) to add the private programs you are invited to. Merge with the public directory by handle, and tag them `private`.
+- [ ] `P2` `feature` `@ai` Intigriti logged-in source: use the researcher API (`api.intigriti.com/external/researcher/v1/programs`) to fill in scope and rewards for the `registered-only` / `terms-required` / `2fa-required` programs and any private invites. Replace those tags with the real data only when the API returns it.
+- [ ] `P1` `safety` `@ai` A missing, expired or rejected token falls back to the anonymous source with a one-line notice. A `401`/`403` never fails the platform, and the token never appears in errors, logs or `--json` output.
+- [ ] `P1` `security` `@me` `@ai` Private program details are usually under the program's confidentiality terms. Keep them out of anything shared: tag them in the store, and leave them out of anything pushed or published. The Google Drive backup *does* copy it today (checked 2026-09-26): `lab` is in `_Admin/backup/backup_folders.txt` and nothing in the excludes matches `data/`. That is fine for public data, but it must be settled before the first logged-in scan. Either exclude Bug Spray's `data/` from the backup, or keep logged-in data in a separate database outside `~/Documents`. Decision needed: which of the two.
+
 ## v3 — opt-in recon (only after v2's guardrails exist)
 
 - [ ] `P2` `feature` `security` `@ai` Authorised assessment path, staged. Split out of the parent list's four-agent "staged specialist integrations" item. Authorisation is the gate, not an afterthought; excludes denial of service, credential theft, stealth/persistence and uncontrolled exploitation. *(split out of sentinel_fork/TODO.md; moved here from v0 -- it's the authorization framework this section's guardrails need, not scaffold work)*
@@ -48,4 +65,4 @@
 ## Explicitly not planned
 
 - [ ] `P0` `security` `@me` **No automated exploitation and no automated report submission, ever, by default.** If this changes, it needs its own explicit opt-in, a per-program authorization confirmation, and a real conversation first — not a config flag flipped in passing.
-- Scraping login-walled program pages — the public-API programs already cover the useful surface; not worth the ToS risk.
+- Scraping login-walled program pages — not worth the ToS risk. Reading them through the platform's official researcher API with your own token is a different thing, planned under v2 → *Logged-in sources*.
