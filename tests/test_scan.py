@@ -271,3 +271,15 @@ def test_scan_without_platforms_is_a_no_op(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(config, "CONFIG_PATH", tmp_path / "none.json")
     assert cli.main(["scan"]) == 0
     assert "No platforms enabled" in capsys.readouterr().out
+
+
+def test_feed_show_all_ignores_the_watchlist(tmp_path):
+    settings = config.Settings(watchlist_keywords=["wanted"], data_dir=str(tmp_path))
+    db = store.Store(settings.db_path)
+    try:
+        db.record(make("wanted"))
+        db.record(make("other"))
+    finally:
+        db.close()
+    assert [p["slug"] for p in read_feed(settings)["programs"]] == ["wanted"]
+    assert {p["slug"] for p in read_feed(settings, show_all=True)["programs"]} == {"wanted", "other"}
