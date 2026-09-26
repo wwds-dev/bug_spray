@@ -49,7 +49,12 @@ off by construction rather than by configuration.
    their platform's public listing.
 4. **Watchlist** (`bug_spray/watchlist.py`) narrows the feed by keyword, tag and minimum
    payout. It filters what is *reported*, never what is *stored*.
-5. **CLI** (`main.py`) — `scan`, `list`, `show`, `--selftest`.
+5. **CLI** (`main.py`) — `scan`, `list`, `show`, `feed`, `--selftest`.
+6. **Sentinel feed** — Bug Spray's in-app Program radar shows the saved programs
+   and recent changes. Opening that workspace starts a background directory scan
+   if the last one is older than `poll_interval_minutes`; while Sentinel stays
+   open, it checks again on that interval. **Scan now** runs it immediately.
+   Scans do not run while Sentinel is closed. The feed never probes a target.
 
 v1 tracks **bounty-paying, publicly listed programs only**. VDPs (no payout),
 invite-only, and login-walled programs are not fetched.
@@ -86,6 +91,7 @@ python main.py scan --platform immunefi --json
 python main.py list                  # stored programs matching the watchlist, highest payout first
 python main.py list --all --limit 0  # everything stored
 python main.py show bugcrowd webdotcom
+python main.py feed --json         # saved programs, recent changes, last scan
 ```
 
 `scan --full` re-fetches every program's detail even where the platform says nothing
@@ -109,10 +115,13 @@ pass a non-zero minimum.
 
 ## In-app integration (Sentinel)
 
-`sentinel_chat_agent.py` at the repo root is separate from the `bug_spray/` package
-above: it is what Sentinel imports as its built-in **Bug Spray** (`bug_bounty`) chat
-agent, not part of the discovery/monitoring CLI. It is a single LLM-only class,
-`BugBountyAgent`, with no source adapters, no store, and no network calls of its own.
+`sentinel_chat_agent.py` is still a single LLM-only `BugBountyAgent` for report
+drafting, with no network calls of its own. Sentinel's **Bug Spray** workspace
+now also embeds `ui/panels/bug_spray_feed.py`, which reads this package's saved
+programs and change events. A background child process runs this repo's scanner
+through its own `.venv`; the GUI stays responsive and shows failures. The
+database records each scan and recent changes so the feed survives restarts.
+Only public program directories are fetched; no program assets are scanned.
 
 `build_messages(target, program, scope_type, findings, nmap_output)` assembles a
 system prompt instructing the model to analyse recon data the *operator* supplies
@@ -147,6 +156,7 @@ bug_spray/
   secrets.py            macOS Keychain-backed token storage (unused by v1 sources)
   models.py             Program / Scope / RewardTier, reward merging, USD approximation
   store.py              SQLite snapshots (written on change) + programs seen/gone
+  feed.py               read-only saved-program feed for Sentinel and CLI
   changes.py            snapshot diff: new, scope, rewards, paused/resumed, gone/back
   watchlist.py          keyword / tag / min-reward filters
   sources/
@@ -162,8 +172,9 @@ tests/
 
 ## Status
 
-**v1 complete (2026-09-25).** All five adapters are live against the real platforms,
-with offline tests over trimmed copies of their responses (`pytest`, 46 tests).
+**v1 discovery complete (2026-09-25); Sentinel feed added 2026-09-26.** All five
+adapters are live against the real platforms, with offline tests over trimmed
+copies of their responses (`pytest`, 48 tests).
 Everything it fetches is public program metadata; nothing here touches a program's
 assets. v2 (triage board, report template, scope-confirmation gate) is next — see
 [TODO.md](TODO.md).

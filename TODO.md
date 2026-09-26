@@ -8,6 +8,8 @@
 
 ## v1 — complete (2026-09-25): real discovery, no auth needed
 
+- [x] `P1` `feature` `@ai` Sentinel integration (2026-09-26): saved program and change feed in the Bug Spray workspace, searchable program list, live-page link, program-name handoff to report drafting, and background scans while Sentinel runs. Scan history and events persist across app restarts; concurrent scans are refused.
+
 - [x] `P0` `feature` `@ai` HackerOne public program directory adapter — this is the highest-value single source and needs no API key. *Reads the site's anonymous GraphQL directory; the documented Hacker API turned out to need a token even for public programs.*
 - [x] `P1` `feature` `@ai` `models.py`: `Program`, `Scope`, `RewardTier` dataclasses shared by every adapter
 - [x] `P1` `feature` `@ai` `store.py`: SQLite snapshot cache + diff-since-last-run
