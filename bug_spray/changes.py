@@ -18,7 +18,9 @@ class RewardChange:
     severity: str
     before: float | None
     after: float | None
-    currency: str
+    currency: str  # the after-side currency (kept for back-compat)
+    before_currency: str | None = None
+    after_currency: str | None = None
 
 
 @dataclass
@@ -70,7 +72,11 @@ def diff_rewards(current: Program, previous: Program) -> list[RewardChange]:
         old, new = before.get(severity), after.get(severity)
         old_top, new_top = old.top() if old else None, new.top() if new else None
         if old_top != new_top or (old and new and old.currency != new.currency):
-            changes.append(RewardChange(severity, old_top, new_top, (new or old).currency))
+            changes.append(RewardChange(
+                severity, old_top, new_top, (new or old).currency,
+                before_currency=old.currency if old else None,
+                after_currency=new.currency if new else None,
+            ))
     return changes
 
 

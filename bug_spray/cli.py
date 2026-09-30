@@ -121,7 +121,11 @@ def _describe(change: ProgramChanges) -> list[str]:
         lines.append(f"SCOPE -{len(change.scope_removed):<3} {head}: {', '.join(change.scope_removed[:8])}"
                      + (" …" if len(change.scope_removed) > 8 else ""))
     for r in change.rewards:
-        lines.append(f"REWARD    {head}: {r.severity} {money(r.before, r.currency)} → {money(r.after, r.currency)}")
+        # Render each side in its own currency so a currency switch (e.g.
+        # $1,000 → €1,000) does not read as a no-op.
+        before = money(r.before, r.before_currency or r.currency)
+        after = money(r.after, r.after_currency or r.currency)
+        lines.append(f"REWARD    {head}: {r.severity} {before} → {after}")
     if lines:
         lines.append(f"          {p.url}")
     return lines
@@ -254,7 +258,12 @@ def list_programs(platform: str | None = None, show_all: bool = False, limit: in
     settings = _load_settings()
     if settings is None:
         return 1
-    db = store.Store(settings.db_path)
+    if not settings.db_path.exists():
+        print("[]" if as_json else "No programs stored yet — run `scan` first.")
+        return 0
+    # Read-only command: open read-only so it does not re-run the schema/backfill
+    # or take a write lock on every invocation.
+    db = store.Store(settings.db_path, readonly=True)
     try:
         programs = db.current_programs(platform)
     finally:
@@ -288,7 +297,10 @@ def show(platform: str, slug: str, as_json: bool = False) -> int:
     settings = _load_settings()
     if settings is None:
         return 1
-    db = store.Store(settings.db_path)
+    if not settings.db_path.exists():
+        print(f"No stored program {platform}/{slug}. `list --all` shows what is stored.")
+        return 1
+    db = store.Store(settings.db_path, readonly=True)
     try:
         payload = db.latest(platform, slug)
     finally:
