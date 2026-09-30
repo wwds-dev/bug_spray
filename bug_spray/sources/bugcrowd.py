@@ -85,8 +85,14 @@ def _directory(client: PoliteClient) -> list[dict]:
         body = client.get_json(f"{BASE_URL}/engagements.json", category="bug_bounty", page=page)
         batch = body.get("engagements") or []
         engagements += batch
-        total = (body.get("paginationMeta") or {}).get("totalCount") or 0
-        if not batch or len(engagements) >= total:
+        total_raw = (body.get("paginationMeta") or {}).get("totalCount")
+        total = total_raw if isinstance(total_raw, int) else 0
+        if not batch:
+            break
+        # Only trust totalCount as a stop condition when it is positive; a
+        # missing, zero, negative or non-integer value must not end pagination
+        # after the first page.
+        if total > 0 and len(engagements) >= total:
             break
     return engagements
 

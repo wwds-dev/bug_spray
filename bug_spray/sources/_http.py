@@ -73,6 +73,9 @@ class PoliteClient:
 
 def _retry_after(response: httpx.Response, default: float) -> float:
     try:
-        return min(float(response.headers.get("Retry-After", default)), 60.0)
+        # Clamp to [0, 60]. A hostile/broken server can send a negative
+        # Retry-After, and time.sleep(negative) raises ValueError that would
+        # escape the retry loop and abort the whole platform fetch.
+        return max(0.0, min(float(response.headers.get("Retry-After", default)), 60.0))
     except ValueError:
         return default

@@ -21,9 +21,16 @@ def read_feed(settings: config.Settings, show_all: bool = False) -> dict:
         programs = [p for p in db.current_programs() if wanted(p)]
         programs.sort(key=lambda p: (p.active, p.max_reward_usd() or 0), reverse=True)
         events = []
+        # Memoise the per-program "wanted?" decision: recent_changes often
+        # carries many events for the same program, and each db.latest() is a
+        # separate query (an N+1 over the change feed).
+        wanted_cache: dict[tuple[str, str], bool] = {}
         for event in db.recent_changes(200):
-            payload = db.latest(event["program"]["platform"], event["program"]["slug"])
-            if payload and wanted(Program.from_dict(payload)):
+            key = (event["program"]["platform"], event["program"]["slug"])
+            if key not in wanted_cache:
+                payload = db.latest(*key)
+                wanted_cache[key] = bool(payload and wanted(Program.from_dict(payload)))
+            if wanted_cache[key]:
                 events.append(event)
         return {
             "last_scan": db.last_scan(),

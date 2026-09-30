@@ -32,7 +32,11 @@ def _ended(end_date: str | None) -> bool:
 def parse_bounty(bounty: dict) -> Program | None:
     if bounty.get("inviteOnly"):
         return None
-    slug = bounty["slug"]
+    slug = bounty.get("slug")
+    if not slug:
+        # One malformed entry must not raise and discard the whole single-request
+        # feed; skip it and keep the rest.
+        return None
     assets = bounty.get("assets") or []
     hidden = bool(bounty.get("hideAssetsInScope"))
 
