@@ -86,7 +86,11 @@ def _directory(client: PoliteClient) -> list[dict]:
         batch = body.get("engagements") or []
         engagements += batch
         total = (body.get("paginationMeta") or {}).get("totalCount") or 0
-        if not batch or len(engagements) >= total:
+        if not batch:
+            break
+        # Only trust totalCount as a stop condition when it is positive; a
+        # missing/zero value must not end pagination after the first page.
+        if total and len(engagements) >= total:
             break
     return engagements
 

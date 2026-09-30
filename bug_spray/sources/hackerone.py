@@ -23,6 +23,10 @@ from ._http import PoliteClient, SourceError
 PLATFORM = "hackerone"
 GRAPHQL_URL = "https://hackerone.com/graphql"
 PAGE_SIZE = 100
+# Ceiling on directory / scope pages, mirroring the other adapters' MAX_PAGES.
+# At 100 programs per page this is far above the real directory size and only
+# stops a runaway loop from an unversioned endpoint.
+MAX_PAGES = 500
 
 _SCOPE_FIELDS = "pageInfo { hasNextPage endCursor } edges { node { asset_identifier asset_type eligible_for_submission } }"
 
@@ -87,7 +91,13 @@ def _graphql(client: PoliteClient, query: str, variables: dict) -> dict:
 
 def _remaining_scopes(client: PoliteClient, handle: str, cursor: str) -> list[dict]:
     nodes: list[dict] = []
-    while cursor:
+    seen: set[str] = set()
+    for _ in range(MAX_PAGES):
+        # The site GraphQL is unversioned; guard against a repeating or empty
+        # endCursor with hasNextPage=true (an infinite loop otherwise).
+        if not cursor or cursor in seen:
+            break
+        seen.add(cursor)
         data = _graphql(client, SCOPE_QUERY, {"handle": handle, "cursor": cursor})
         page = data["team"]["structured_scopes"]
         nodes += [edge["node"] for edge in page["edges"]]
@@ -101,8 +111,9 @@ def fetch_programs(known: Mapping[str, Program] | None = None) -> list[Program]:
     known = known or {}
     programs: list[Program] = []
     cursor = None
+    seen_cursors: set[str] = set()
     with PoliteClient() as client:
-        while True:
+        for _ in range(MAX_PAGES):
             teams = _graphql(client, DIRECTORY_QUERY, {"cursor": cursor})["teams"]
             for edge in teams["edges"]:
                 node = edge["node"]
@@ -121,9 +132,14 @@ def fetch_programs(known: Mapping[str, Program] | None = None) -> list[Program]:
                 )
                 if program:
                     programs.append(program)
-            if not teams["pageInfo"]["hasNextPage"]:
-                return programs
-            cursor = teams["pageInfo"]["endCursor"]
+            info = teams["pageInfo"]
+            cursor = info["endCursor"]
+            # Stop on the last page, or if the unversioned endpoint reports
+            # hasNextPage=true with a repeating/empty cursor (would loop forever).
+            if not info["hasNextPage"] or not cursor or cursor in seen_cursors:
+                break
+            seen_cursors.add(cursor)
+    return programs
 
 
 register(PLATFORM, fetch_programs)
