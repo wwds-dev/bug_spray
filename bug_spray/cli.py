@@ -20,6 +20,7 @@ import fcntl
 import json
 import logging
 import os
+import sqlite3
 import sys
 from dataclasses import asdict
 from datetime import UTC, datetime
@@ -262,12 +263,20 @@ def list_programs(platform: str | None = None, show_all: bool = False, limit: in
         print("[]" if as_json else "No programs stored yet — run `scan` first.")
         return 0
     # Read-only command: open read-only so it does not re-run the schema/backfill
-    # or take a write lock on every invocation.
-    db = store.Store(settings.db_path, readonly=True)
+    # or take a write lock on every invocation. A legacy (pre-migration) DB has
+    # `snapshots` but no `programs` table, and current_programs() joins it, so on
+    # that OperationalError fall back to one read-write open to migrate, then read.
+    def _read(readonly):
+        db = store.Store(settings.db_path, readonly=readonly)
+        try:
+            return db.current_programs(platform)
+        finally:
+            db.close()
+
     try:
-        programs = db.current_programs(platform)
-    finally:
-        db.close()
+        programs = _read(readonly=True)
+    except sqlite3.OperationalError:
+        programs = _read(readonly=False)
 
     total = len(programs)
     if not show_all:
