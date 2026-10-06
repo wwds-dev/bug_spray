@@ -185,7 +185,7 @@ assets. v2 (triage board, report template, scope-confirmation gate) is next — 
 
 ## Environment
 
-Own git repo (nested under `sentinel_fork/agents/`), `uv` venv, Python ≥3.11, PySide6 not
+Own git repo (nested under `sentinel/agents/`), `uv` venv, Python ≥3.11, PySide6 not
 yet needed — this starts as a CLI tool and only grows a GUI (via `lab_hub`) if the CLI
 workflow proves useful enough to want one. Follows the pseudonymous commit identity used
 across this lab.
