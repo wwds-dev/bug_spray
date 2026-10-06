@@ -58,7 +58,7 @@ login pages, which stays rejected.
 
 ## v3 — opt-in recon (only after v2's guardrails exist)
 
-- [ ] `P2` `feature` `security` `@ai` Authorised assessment path, staged. Split out of the parent list's four-agent "staged specialist integrations" item. Authorisation is the gate, not an afterthought; excludes denial of service, credential theft, stealth/persistence and uncontrolled exploitation. *(split out of sentinel_fork/TODO.md; moved here from v0 -- it's the authorization framework this section's guardrails need, not scaffold work)*
+- [ ] `P2` `feature` `security` `@ai` Authorised assessment path, staged. Split out of the parent list's four-agent "staged specialist integrations" item. Authorisation is the gate, not an afterthought; excludes denial of service, credential theft, stealth/persistence and uncontrolled exploitation. *(split out of sentinel/TODO.md; moved here from v0 -- it's the authorization framework this section's guardrails need, not scaffold work)*
 - [ ] `P2` `research` `@me` Decide which recon tools (subdomain enum, endpoint diffing) are worth wiring in, and read each target program's automated-testing rules before wiring anything
 - [ ] `P1` `safety` `@ai` Shared rate-limit + scope-guard module every recon adapter must call through — not left to each adapter to remember
 - [ ] `P3` `feature` `@ai` Recon run stored as a diffable snapshot, same pattern as program scope
