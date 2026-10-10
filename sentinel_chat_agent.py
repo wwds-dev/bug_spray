@@ -26,7 +26,8 @@ Be precise. Avoid speculation. Only reference evidence present in the provided d
 
 class BugBountyAgent:
     def build_messages(self, target: str, program: str, scope_type: str,
-                       findings: str, nmap_output: str) -> list[dict]:
+                       findings: str, nmap_output: str,
+                       severity: str = "") -> list[dict]:
         context_parts = []
         if program:
             context_parts.append(f"Bug Bounty Program: {program}")
@@ -34,6 +35,9 @@ class BugBountyAgent:
             context_parts.append(f"Scope Type: {scope_type}")
         if target:
             context_parts.append(f"Target: {target}")
+        if severity:
+            context_parts.append(
+                f"Reporter's severity expectation (unverified; rate from the evidence): {severity}")
         if nmap_output.strip():
             context_parts.append(f"Nmap Scan Output:\n{nmap_output}")
         if findings.strip():
