@@ -127,6 +127,14 @@ through its own `.venv`; the GUI stays responsive and shows failures. The
 database records each scan and recent changes so the feed survives restarts.
 Only public program directories are fetched; no program assets are scanned.
 
+**Safety prompts in the Sentinel workspace.** Scanning is never on by default: with
+no platform enabled the feed shows "No platforms enabled: open Watchlist to choose."
+and fetches nothing. **Run Nmap** refuses an empty Program, asks a default-No
+authorisation question naming the target, program and command (declining starts
+nothing), and writes every attempt (refused, declined or started) to
+`data/logs/bug_spray_audit.jsonl` in the Sentinel data folder. The Severity Target
+chosen in the panel is passed to the model request.
+
 `build_messages(target, program, scope_type, findings, nmap_output)` assembles a
 system prompt instructing the model to analyse recon data the *operator* supplies
 (HTTP responses, Burp output, nmap results, source snippets) for a target the operator
